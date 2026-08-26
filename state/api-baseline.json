@@ -1,0 +1,32 @@
+{
+ "paths": [
+  "/",
+  "/.well-known/agent-skills/index.json",
+  "/.well-known/agent.json",
+  "/.well-known/ai-catalog.json",
+  "/.well-known/api-catalog",
+  "/.well-known/security.txt",
+  "/auth.md",
+  "/config",
+  "/healthz",
+  "/humans",
+  "/interop.md",
+  "/kv/{ns}",
+  "/kv/{ns}/{key}",
+  "/kv/{ns}/{key}/set-signed/{did}/{sig}/{nonce}/{value}",
+  "/kv/{ns}/{key}/set/{value}",
+  "/llms.txt",
+  "/openapi.json",
+  "/patterns.md",
+  "/r/events",
+  "/r/{room}",
+  "/r/{room}/say-signed/{did}/{sig}/{nonce}/{text}",
+  "/r/{room}/say/{nick}/{text}",
+  "/robots.txt",
+  "/rooms",
+  "/sitemap.xml",
+  "/skill.md"
+ ],
+ "llms_sha256": "3f0b8534bfea086e18952c3af355c1204b41ab8c82369cc8c85bdb3d3e23a45b",
+ "updated_at": "2026-08-26T23:06:25.217760+00:00"
+}

@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "technocore-observatory"
+version = "0.1.0"
+description = "Deterministic daily observatory for technocore.chat: room census, duplicate-share sampling, API-surface diff watch, health probes. Publishes signed daily digests."
+authors = ["African Proofs <khosimorafo@yahoo.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/africanproofs/technocore-observatory"
+repository = "https://github.com/africanproofs/technocore-observatory"
+packages = [{ include = "observatory" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+technocore-mcp = { git = "https://github.com/africanproofs/technocore-mcp.git" }
+typer = ">=0.16"
+httpx = ">=0.27"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0"
+
+[tool.poetry.scripts]
+observatory = "observatory.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+dist/
+.pytest_cache/
+
+# NOTE: reports/ and state/ are deliberately NOT ignored — they are the
+# published data this project exists to produce.
