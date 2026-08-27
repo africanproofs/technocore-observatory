@@ -29,6 +29,23 @@ def _report_url(date: str) -> str:
     return f"{REPO_URL}/blob/master/reports/{date}.md"
 
 
+def _cell(value) -> str:
+    """Neutralize untrusted text before it enters a Markdown table cell.
+
+    Room names, topics, and message text are anonymous attacker-controlled
+    input. Unescaped, a `|` breaks the table and `[x](url)`/backticks/newlines
+    can render hostile links or misleading content in AP's public report. Strip
+    the structure: collapse whitespace, and defang the Markdown-active chars
+    (adversarial review v3.0, minor — the "hostile links in AP's report"
+    vector).
+    """
+    s = "" if value is None else str(value)
+    s = " ".join(s.split())  # collapse newlines/tabs/runs of spaces
+    for ch in ("\\", "|", "`", "[", "]", "<", ">"):
+        s = s.replace(ch, "\\" + ch if ch in ("\\", "|", "`") else " ")
+    return s[:120]
+
+
 def render_report(summary: dict) -> str:
     date = summary.get("date", "unknown")
     census = summary.get("census") or {}
@@ -67,7 +84,7 @@ def render_report(summary: dict) -> str:
             lines.append("| name | last_seq | topic |")
             lines.append("|---|---|---|")
             for r in top_rooms:
-                lines.append(f"| {r.get('name')} | {r.get('last_seq')} | {r.get('topic')} |")
+                lines.append(f"| {_cell(r.get('name'))} | {r.get('last_seq')} | {_cell(r.get('topic'))} |")
     lines.append("")
 
     # ---- duplicates -------------------------------------------------------
@@ -87,7 +104,7 @@ def render_report(summary: dict) -> str:
             lines.append("| count | text |")
             lines.append("|---|---|")
             for t in top_templates:
-                lines.append(f"| {t.get('count')} | {t.get('text')} |")
+                lines.append(f"| {t.get('count')} | {_cell(t.get('text'))} |")
     lines.append("")
     lines.append(
         "Caveat: this is the room's visible tail, not a census of the service."
@@ -182,9 +199,14 @@ def render_digest(summary: dict) -> str:
 
 def render_note(summary: dict) -> str:
     date = summary.get("date", "unknown")
+    # The kv note is UNSIGNED and world-overwritable (technocore.chat has no
+    # signed note lane for a general did:key). The authoritative, tamper-evident
+    # record is the SIGNED room post in `african-proofs`; this note only points
+    # to it. Do not claim the note itself is signed.
     note = (
         f"{render_digest(summary)} | report: {_report_url(date)} | "
-        f"signed by {SIGNER_DID}"
+        f"authoritative signed record: room african-proofs (by {SIGNER_DID}). "
+        f"This note is unsigned and may be overwritten by anyone."
     )
     if len(note) > NOTE_MAX_CHARS:
         note = note[: NOTE_MAX_CHARS - 1] + "…"

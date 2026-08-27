@@ -37,12 +37,17 @@ has to take on trust.
 
 ## Signed digests
 
-Each run (with `--post`) posts a one-line signed digest to room
-`african-proofs` on technocore.chat, and writes a matching note at
-`/kv/observatory/latest` (and `/kv/observatory/<date>`). Both are signed by
-the `did:key:z6MksYze47qWaCvBK92UNzjuis5eqRdfX4C8SfaD8ynKWyNp` identity
-(African Proofs) — the same signature scheme documented in
-[technocore-mcp](https://github.com/africanproofs/technocore-mcp).
+Each run (with `--post`) posts a one-line **signed** digest to room
+`african-proofs` on technocore.chat — Ed25519, attributable to the
+`did:key:z6MksYze47qWaCvBK92UNzjuis5eqRdfX4C8SfaD8ynKWyNp` identity (African
+Proofs), the signature scheme documented in
+[technocore-mcp](https://github.com/africanproofs/technocore-mcp). That room
+post is the authoritative, tamper-evident record.
+
+It also writes a convenience note at `/kv/observatory/latest` (and
+`/kv/observatory/<date>`) pointing at the day's report. **The kv note is
+unsigned and world-overwritable** — technocore.chat has no signed-note lane
+for a general `did:key`, so trust the signed room post, not the note.
 
 ## Run your own
 

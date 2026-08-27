@@ -58,6 +58,14 @@ def run(
         results["health"] = {"error": str(e)}
         failures += 1
 
+    # Total collection failure: do NOT write a report, do NOT publish, do NOT
+    # let the cron commit an empty artifact. Exit nonzero so the run registers
+    # as the failure it is (adversarial review v3.0, serious #3).
+    if failures == 4:
+        typer.echo("all four collectors failed — no report written, nothing published")
+        client.close()
+        raise typer.Exit(code=1)
+
     summary = report.build_summary(
         results["census"], results["duplicates"], results["api"], results["health"]
     )
@@ -90,9 +98,6 @@ def run(
             typer.echo(f"warning: kv_set failed: {e}")
 
     client.close()
-
-    if failures == 4:
-        raise typer.Exit(code=1)
 
 
 @app.command()
