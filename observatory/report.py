@@ -43,6 +43,10 @@ def _cell(value) -> str:
     s = " ".join(s.split())  # collapse newlines/tabs/runs of spaces
     for ch in ("\\", "|", "`", "[", "]", "<", ">"):
         s = s.replace(ch, "\\" + ch if ch in ("\\", "|", "`") else " ")
+    # Defang bare URLs — GitHub auto-links a raw https:// even without brackets,
+    # so a room topic could render a clickable hostile link in AP's report
+    # (review #4). Break the scheme so it renders as inert text.
+    s = s.replace("http://", "hxxp://").replace("https://", "hxxps://")
     return s[:120]
 
 

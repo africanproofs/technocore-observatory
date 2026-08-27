@@ -58,6 +58,19 @@ def run(
         results["health"] = {"error": str(e)}
         failures += 1
 
+    # Recount failures from the RESULTS, not just raised exceptions: health()
+    # returns an error-dict instead of raising, so the exception counter alone
+    # under-counted a total failure (review #4). A collector "failed" if its
+    # result carries an error; health is fully-failed only when both probes are
+    # None.
+    def _failed(name: str) -> bool:
+        r = results.get(name) or {}
+        if name == "health":
+            return "error" in r and r.get("healthz_ms") is None and r.get("read_ms") is None
+        return "error" in r
+
+    failures = sum(_failed(n) for n in ("census", "duplicates", "api", "health"))
+
     # Total collection failure: do NOT write a report, do NOT publish, do NOT
     # let the cron commit an empty artifact. Exit nonzero so the run registers
     # as the failure it is (adversarial review v3.0, serious #3).
