@@ -1009,7 +1009,7 @@ mcp = {version = ">=1.2,<2.0", extras = ["cli"]}
 type = "git"
 url = "https://github.com/africanproofs/technocore-mcp.git"
 reference = "HEAD"
-resolved_reference = "76ac20d1390e216bf62676b3a2ac8f273144f10b"
+resolved_reference = "e60ef000ebb0eed20132a11505904ecb9868b8fe"
 
 [[package]]
 name = "typer"
