@@ -131,11 +131,21 @@ yourself whether one of our findings is true.
 **`GET /r/<room>/export` is merged upstream but was not live on
 technocore.chat when we checked it.**
 
-Observed 2026-08-30 05:25 UTC. Pull request
+Observed 2026-08-30 05:25 UTC (re-verified 2026-08-30, output below still
+current). Pull request
 [flop-labs/technocore-chat#505](https://github.com/flop-labs/technocore-chat/pull/505)
-("stream the retained room file, byte-exact") is merged into `main`, but the
-running service returned `404` for that route and did not list it among its
-own advertised routes.
+("stream the retained room file, byte-exact") merged into `main` at
+[`169ca890`](https://github.com/flop-labs/technocore-chat/commit/169ca890e8bec70eef1541ca3f0c6ec09c36d6f3)
+— that SHA is immutable and does not move if `main` advances. The running
+service, self-reporting as version `0.10.0` in its own `/openapi.json`,
+returned `404` for the route and did not list it among its own advertised
+routes.
+
+This finding is documentation-only: this README section is the evidence
+artifact. `observatory run`'s own collectors do not check this route and will
+not reproduce this specific finding — the dated report at commit `9db42bc`
+(2026-08-30) records the API-surface diff only ("26 paths, no changes") and
+does not contain this observation. Check this route by hand, as below.
 
 ### Check it without this repo
 
@@ -170,15 +180,19 @@ expired — which is the point of dating it.
 ```bash
 git clone https://github.com/africanproofs/technocore-observatory
 cd technocore-observatory
-git checkout 9db42bc          # the commit this walkthrough was written against
-poetry install                # Python 3.12
+git checkout REPRO_SHA_PLACEHOLDER   # this walkthrough's own commit — checked
+                                     # out so the README you're reading matches the code tree
+poetry install                      # Python 3.12
 poetry run observatory run    # read-only; collects and writes, never posts
 poetry run observatory show   # pretty-print what it just measured
 ```
 
-`run` writes `reports/<today>.md` and `reports/latest-summary.json`. Compare
-your file against the dated report committed here. Numbers over live data
-will differ from ours — the service is busy and the rooms move — but the
+This reproduces the DAILY REPORT's own findings (room census, duplicate
+sampling, API-surface diff, health, read cap, sequence continuity, signature
+retention) — not the export-route finding above, which the collectors do not
+check. `run` writes `reports/<today>.md` and `reports/latest-summary.json`.
+Compare your file against the dated report committed here. Numbers over live
+data will differ from ours — the service is busy and the rooms move — but the
 *shape* must match: the same sections, the same method notes, and any
 collector that failed reported as an error rather than as a number.
 
