@@ -180,8 +180,8 @@ expired — which is the point of dating it.
 ```bash
 git clone https://github.com/africanproofs/technocore-observatory
 cd technocore-observatory
-git checkout REPRO_SHA_PLACEHOLDER   # this walkthrough's own commit — checked
-                                     # out so the README you're reading matches the code tree
+# no checkout needed — you already have whatever commit you cloned;
+# `git log -1 --format=%H README.md` shows which commit last touched this file
 poetry install                      # Python 3.12
 poetry run observatory run    # read-only; collects and writes, never posts
 poetry run observatory show   # pretty-print what it just measured
