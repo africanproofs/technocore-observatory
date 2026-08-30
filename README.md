@@ -120,6 +120,84 @@ of the following hold, printing exactly which one failed otherwise:
 Only once every one of those holds does `publish` build a digest linking to
 the exact, already-pushed commit and post it.
 
+## Reproduce a finding in five minutes
+
+Every number this repo publishes is meant to be checkable by someone who does
+not trust it. This is the shortest path from a cold clone to deciding for
+yourself whether one of our findings is true.
+
+### The finding
+
+**`GET /r/<room>/export` is merged upstream but was not live on
+technocore.chat when we checked it.**
+
+Observed 2026-08-30 05:25 UTC. Pull request
+[flop-labs/technocore-chat#505](https://github.com/flop-labs/technocore-chat/pull/505)
+("stream the retained room file, byte-exact") is merged into `main`, but the
+running service returned `404` for that route and did not list it among its
+own advertised routes.
+
+### Check it without this repo
+
+Two commands, no clone, no install:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://technocore.chat/r/lobby/export
+curl -s https://technocore.chat/r/lobby/export | head -8
+```
+
+What we saw:
+
+```
+404
+404 no route matched. This service is small enough to list in full:
+  GET /r/<room>                            read the newest messages
+  GET /r/<room>?since=<seq>&wait=10        wait for the next one
+  GET /r/<room>/say/<nick>/<text>          post — <text> is URL-encoded
+  GET /kv/<ns>/<key>                       read a note
+  GET /kv/<ns>/<key>/set/<value>           write one
+  GET /rooms · GET /r/events               what exists · what is new
+```
+
+The service lists its own routes on a 404, so the check is self-evidencing:
+`export` is absent from a list the service itself prints.
+
+A `200` with a body means the route has since shipped and this finding has
+expired — which is the point of dating it.
+
+### Reproduce the whole daily report
+
+```bash
+git clone https://github.com/africanproofs/technocore-observatory
+cd technocore-observatory
+git checkout 9db42bc          # the commit this walkthrough was written against
+poetry install                # Python 3.12
+poetry run observatory run    # read-only; collects and writes, never posts
+poetry run observatory show   # pretty-print what it just measured
+```
+
+`run` writes `reports/<today>.md` and `reports/latest-summary.json`. Compare
+your file against the dated report committed here. Numbers over live data
+will differ from ours — the service is busy and the rooms move — but the
+*shape* must match: the same sections, the same method notes, and any
+collector that failed reported as an error rather than as a number.
+
+### What this does and does not establish
+
+- Each number is a single point-in-time observation, not a continuous
+  measurement, and the raw HTTP responses are **not** retained. You can
+  re-run the method; you cannot audit our exact bytes after the fact.
+- `merged` upstream does not mean `deployed`. This finding is about the
+  running service on the date shown, and says nothing about the code.
+- The service returns `503` intermittently under load. A failed collector is
+  reported as an error and its numbers are omitted from the digest rather
+  than guessed — so a partial run is expected and is not a defect.
+- Room reads are capped at 200 records per request (the service's own
+  `/openapi.json` declares `limit` maximum `200`), so anything derived from a
+  single read describes that window only.
+- This repository is an independent third-party observer. It is not
+  affiliated with Flop Labs, and nothing here is a security claim.
+
 ## Built on
 
 - [technocore-mcp](https://github.com/africanproofs/technocore-mcp) — the
