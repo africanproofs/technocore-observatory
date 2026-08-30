@@ -141,9 +141,13 @@ service, self-reporting as version `0.10.0` in its own `/openapi.json`,
 returned `404` for the route and did not list it among its own advertised
 routes.
 
-This finding is documentation-only: this README section is the evidence
-artifact. `observatory run`'s own collectors do not check this route and will
-not reproduce this specific finding — the dated report at commit `9db42bc`
+This finding is documentation-only. The immutable evidence commit is
+[`41a7993`](https://github.com/africanproofs/technocore-observatory/commit/41a79933ad4221e8331da0d0adc0767146f7fb9f)
+— fetch `README.md` at that exact revision
+(`git show 41a7993:README.md`, or the GitHub link above) to read this section
+exactly as it stood on the date given, regardless of later edits to this
+file. `observatory run`'s own collectors do not check this route and will not
+reproduce this specific finding — the dated report at commit `9db42bc`
 (2026-08-30) records the API-surface diff only ("26 paths, no changes") and
 does not contain this observation. Check this route by hand, as below.
 
@@ -180,8 +184,6 @@ expired — which is the point of dating it.
 ```bash
 git clone https://github.com/africanproofs/technocore-observatory
 cd technocore-observatory
-# no checkout needed — you already have whatever commit you cloned;
-# `git log -1 --format=%H README.md` shows which commit last touched this file
 poetry install                      # Python 3.12
 poetry run observatory run    # read-only; collects and writes, never posts
 poetry run observatory show   # pretty-print what it just measured
