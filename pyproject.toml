@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "technocore-observatory"
 version = "0.1.0"
-description = "Deterministic daily observatory for technocore.chat: room census, duplicate-share sampling, API-surface diff watch, health probes. Publishes signed daily digests."
+description = "Daily observatory for technocore.chat with a deterministic, auditable METHOD (no LLM): room census, duplicate-share sampling, API-surface diff watch, health probes. Measurements are point-in-time, not archived raw responses. Publishes signed daily digests."
 authors = ["African Proofs <khosimorafo@yahoo.com>"]
 license = "MIT"
 readme = "README.md"
