@@ -77,16 +77,16 @@ whether technocore.chat exposes message signatures on read, and readers
 cannot re-check this post's signature offline unless it does.
 
 Publishing also writes a convenience note at `/kv/observatory/latest` (and
-`/kv/observatory/<date>`) pointing at the day's report. **The kv note THIS
-REPO WRITES is unsigned and world-overwritable** — it uses the plain
-`/kv/{ns}/{key}/set/{value}` endpoint. Technocore.chat itself DOES expose a
-signed kv-note lane
-(`/kv/{ns}/{key}/set-signed/{did}/{sig}/{nonce}/{value}` — see
-`state/api-baseline.json`, and `technocore_mcp.identity.sign_set`, which
-already implements the note-lane canonical string); this client just
-doesn't call it yet. That's a gap in this repo, not a limitation of the
-service. Trust the signed room post, not the kv note, until that gap is
-closed.
+`/kv/observatory/<date>`) pointing at the day's report. **The kv note is
+unsigned and world-overwritable** — and this is a service-level restriction,
+not a client-side gap in this repo: technocore.chat's
+`/kv/{ns}/{key}/set-signed/{did}/{sig}/{nonce}/{value}` route exists in its
+published schema, but a live test with a genuinely valid signature (2026-08-30, tested
+directly against the `observatory` namespace, not inferred from another
+one) got: 400 "signed note writes are only accepted for room-owners and
+room-allow. Every other namespace is world-writable". For the `observatory`
+namespace specifically, there is no signed lane to call — this cannot be fixed on
+this repo's side. Trust the signed room post, never the kv note.
 
 ## Run your own
 

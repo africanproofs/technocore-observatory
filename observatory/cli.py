@@ -5,8 +5,8 @@
 
 `observatory publish`: the ONLY command that ever posts to technocore.chat.
 It refuses to post unless the report for the given date is already
-committed AND pushed (see `resolve_pushed_commit`), so a permanent post can
-never point at content that isn't public yet or could still change
+committed AND pushed (see `resolve_pushed_commit`), so an irretractable post
+can never point at content that isn't public yet or could still change
 underneath a mutable branch pointer (FIX 1). `run` used to also accept
 `--post` and do this itself, immediately after writing the report and
 therefore BEFORE any commit could possibly have happened -- that ordering
@@ -184,7 +184,7 @@ def _verify_origin_remote(repo_root: Path) -> tuple[bool, str]:
 
 def resolve_pushed_commit(report_path: Path, repo_root: Path) -> tuple[bool, str | None, str]:
     """Resolve the commit SHA that produced `report_path`'s current content,
-    and verify it is safe to build a PERMANENT public link to (FIX 1):
+    and verify it is safe to build an IMMUTABLE public link to (FIX 1):
 
       (a) `report_path` exists on disk;
       (b) it has commit history (`git log -1 --format=%H -- <path>`);
@@ -564,7 +564,7 @@ def publish(
     # raise `PublicationTooLongError` instead of silently truncating with an
     # ellipsis -- the permalink and attribution footer sit at the end of
     # both strings, so a truncated string could post a broken or
-    # misattributed permanent record. Composing both up front (the note
+    # misattributed record with no way to retract it. Composing both up front (the note
     # needs only `summary`/`sha`, nothing produced by the post itself) means
     # a too-long NOTE also fails publication before the post happens, not
     # just a too-long digest.

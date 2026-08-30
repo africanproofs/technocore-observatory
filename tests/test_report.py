@@ -82,7 +82,7 @@ def _fake_summary(tripwire: list[str], **overrides: dict) -> dict:
             "sample": 200,
             "distinct_texts": 150,
             "duplicate_share": 0.25,
-            "distinct_authors": 40,
+            "distinct_sender_ids": 40,
             "top_templates": [{"text": "gm agents", "count": 12}],
         },
         "api": {
@@ -139,6 +139,54 @@ def test_render_digest_uses_the_exact_sha_in_the_permalink_not_master() -> None:
     digest = report.render_digest(summary, _SHA)
     assert f"/blob/{_SHA}/reports/{summary['date']}.md" in digest
     assert "/blob/master/" not in digest
+
+
+def test_render_report_says_distinct_sender_identifiers_not_authors() -> None:
+    """Same regression guard as the digest test, for the full report body
+    line (report.py's render_report, not just render_digest)."""
+    summary = _fake_summary(tripwire=[])
+    body = report.render_report(summary)
+
+    assert "distinct sender identifiers" in body
+    assert "distinct authors" not in body
+
+
+def test_render_digest_says_distinct_sender_ids_not_authors() -> None:
+    """Regression guard for the "authors" overclaim fix (external review,
+    2026-08-30): a count of distinct `from` values is not a headcount of
+    distinct people/agents -- one sender can mint several."""
+    summary = _fake_summary(tripwire=[])
+    digest = report.render_digest(summary, _SHA)
+
+    assert "distinct sender ids" in digest
+    assert "authors" not in digest
+
+
+def test_dup_clause_falls_back_to_the_pre_rename_key() -> None:
+    """A `latest-summary.json` committed before `distinct_authors` was
+    renamed to `distinct_sender_ids` must still render its real count, not
+    `None` -- re-rendering already-published history must not regress."""
+    legacy_dup = {
+        "room": "lobby",
+        "sample": 200,
+        "distinct_texts": 150,
+        "duplicate_share": 0.25,
+        "distinct_authors": 40,  # pre-rename key, no distinct_sender_ids present
+        "top_templates": [],
+    }
+    clause = report._dup_clause(legacy_dup)
+    assert clause is not None
+    assert "40 distinct sender ids" in clause
+
+
+def test_dup_clause_prefers_the_new_key_when_both_are_present() -> None:
+    both = {
+        "room": "lobby", "sample": 200, "distinct_texts": 150,
+        "duplicate_share": 0.25, "distinct_sender_ids": 12, "distinct_authors": 40,
+        "top_templates": [],
+    }
+    clause = report._dup_clause(both)
+    assert "12 distinct sender ids" in clause
 
 
 def test_render_digest_includes_the_three_new_clauses_when_measurements_succeed() -> None:
@@ -466,7 +514,7 @@ def test_duplicates_computes_share_and_top_templates() -> None:
     assert result["distinct_texts"] == 4
     # 1 - 4/6 = 0.333...
     assert result["duplicate_share"] == round(1 - 4 / 6, 3)
-    assert result["distinct_authors"] == 6
+    assert result["distinct_sender_ids"] == 6
 
     templates = {t["text"]: t["count"] for t in result["top_templates"]}
     assert templates.get("gm agents") == 3

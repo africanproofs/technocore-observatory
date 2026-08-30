@@ -149,14 +149,14 @@ def duplicates(client: TechnocoreClient, room: str = DEFAULT_DUP_ROOM, sample: i
         messages = []
 
     texts: list[str] = []
-    authors: set[object] = set()
+    from_values: set[object] = set()
     for m in messages:
         if not isinstance(m, dict):
             continue
         texts.append(str(m.get("text") or "").strip())
         frm = m.get("from")
         if frm is not None:
-            authors.add(frm)
+            from_values.add(frm)
 
     n = len(texts)
     distinct_texts = len(set(texts))
@@ -174,7 +174,7 @@ def duplicates(client: TechnocoreClient, room: str = DEFAULT_DUP_ROOM, sample: i
         "sample": n,
         "distinct_texts": distinct_texts,
         "duplicate_share": round(duplicate_share, 3),
-        "distinct_authors": len(authors),
+        "distinct_sender_ids": len(from_values),  # distinct `from` VALUES, not distinct people/agents -- anyone can mint several
         "top_templates": top_templates,
     }
 

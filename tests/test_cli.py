@@ -48,7 +48,7 @@ def _canned() -> dict:
             "sample": 1,
             "distinct_texts": 1,
             "duplicate_share": 0.0,
-            "distinct_authors": 1,
+            "distinct_sender_ids": 1,
             "top_templates": [],
         },
         "api": {

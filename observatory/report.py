@@ -1,6 +1,8 @@
-"""Turns the seven collector dicts into a summary, a markdown report, and the
-two short signed strings (digest + note). No network calls here — pure
-formatting over already-collected data.
+"""Turns the seven collector dicts into a summary, a markdown report, and two
+short publication strings: a signed digest and an UNSIGNED note (see the
+comment inside `render_note` for why the service refuses a signed write here
+under its CURRENT policy). No network calls here -- pure formatting over
+already-collected data.
 """
 
 from __future__ import annotations
@@ -20,7 +22,8 @@ class PublicationTooLongError(Exception):
     exceed its char cap (FIX C). The permalink and attribution footer sit at
     the END of both strings -- silently truncating with an ellipsis (the old
     behavior) could cut into the URL or the attribution itself, posting a
-    broken or misattributed permanent record. There is no safe truncation
+    broken or misattributed record with no way to retract it. There is no
+    safe truncation
     here: a caller (`observatory.cli.publish`) must catch this and refuse to
     publish, never post a shortened string instead."""
 
@@ -51,7 +54,8 @@ def build_summary(
 def _report_url(date: str, sha: str) -> str:
     """An IMMUTABLE permalink to the report at the exact commit `sha` --
     never `blob/master` (FIX 1), which is a mutable pointer that can move
-    out from under a post that already went out permanently, or point at
+    out from under a post that has already gone out and cannot be retracted,
+    or point at
     content that was never actually pushed. `sha` is required: the only
     caller of this in production, `publish`, must resolve and verify it
     BEFORE building anything that gets posted (see `observatory.cli.
@@ -166,7 +170,7 @@ def render_report(summary: dict) -> str:
         lines.append(f"- room: {dup.get('room')}")
         lines.append(f"- sample size: {dup.get('sample')}")
         lines.append(f"- duplicate share: {share_pct}%")
-        lines.append(f"- distinct authors: {dup.get('distinct_authors')}")
+        lines.append(f"- distinct sender identifiers (not distinct people/agents): {_sender_id_count(dup)}")
         top_templates = dup.get("top_templates") or []
         if top_templates:
             lines.append("")
@@ -464,17 +468,30 @@ def _rooms_clause(census: dict) -> str | None:
     return clause
 
 
+def _sender_id_count(dup: dict) -> int | None:
+    """`distinct_sender_ids`, or the pre-rename `distinct_authors` key from a
+    summary/report committed before this field was renamed -- so re-rendering
+    an old, already-published `latest-summary.json` shows the real count
+    instead of `None`. New output only ever writes the new key; this read
+    path is the only place the old name is still honoured."""
+    v = dup.get("distinct_sender_ids")
+    return v if v is not None else dup.get("distinct_authors")
+
+
 def _dup_clause(dup: dict) -> str | None:
     if "error" in dup:
         return None
     dup_share = dup.get("duplicate_share")
     sample = dup.get("sample")
-    authors = dup.get("distinct_authors")
+    sender_ids = _sender_id_count(dup)
     if isinstance(dup_share, bool) or not isinstance(dup_share, (int, float)):
         return None
-    if not _is_plain_int(sample) or not _is_plain_int(authors):
+    if not _is_plain_int(sample) or not _is_plain_int(sender_ids):
         return None
-    return f"dup-share={round(dup_share * 100, 1)}% ({sample}-msg lobby sample, {authors} authors)"
+    return (
+        f"dup-share={round(dup_share * 100, 1)}% "
+        f"({sample}-msg lobby sample, {sender_ids} distinct sender ids)"
+    )
 
 
 def _api_clause(api: dict) -> str | None:
@@ -682,15 +699,17 @@ def render_note(summary: dict, sha: str) -> str:
     """`sha` is REQUIRED for the same reason as in `render_digest` -- see
     its docstring."""
     date = summary.get("date", "unknown")
-    # The kv note THIS REPO WRITES is unsigned and world-overwritable,
-    # because this client only ever calls the plain
-    # `/kv/{ns}/{key}/set/{value}` endpoint. Technocore.chat itself DOES
-    # expose a signed kv-note lane
-    # (`/kv/{ns}/{key}/set-signed/{did}/{sig}/{nonce}/{value}` -- see
-    # state/api-baseline.json, and technocore_mcp.identity.sign_set, which
-    # already implements that lane's canonical string) -- this client simply
-    # doesn't call it yet. That is a gap in THIS repo, not something the
-    # service lacks; do not claim otherwise. Separately: the room post is
+    # The kv note is unsigned and world-overwritable -- and this is a
+    # SERVICE-LEVEL restriction, not a gap in this client: the
+    # `/kv/{ns}/{key}/set-signed/{did}/{sig}/{nonce}/{value}` route exists in
+    # the service's own published schema, but a live test with a genuinely valid
+    # signature (2026-08-30, tested directly against the `observatory`
+    # namespace this code actually writes to, not inferred from another one)
+    # got: 400 "signed note writes are only accepted for room-owners and
+    # room-allow. Every other namespace is world-writable". There is no
+    # signed lane to call for this namespace --
+    # this cannot be fixed on this repo's side, so never claim otherwise.
+    # Separately: the room post is
     # signed at write time and attributable to SIGNER_DID, but calling it
     # unconditionally "tamper-evident" overclaims -- this repo's own
     # signature-retention measurement shows technocore.chat does not
