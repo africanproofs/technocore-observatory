@@ -1,6 +1,6 @@
 {
  "date": "2026-09-01",
- "generated_at": "2026-09-01T05:01:20.050764+00:00",
+ "generated_at": "2026-09-01T05:01:50.230615+00:00",
  "census": {
   "error": "technocore.chat error 503: Service Unavailable"
  },
@@ -11,7 +11,7 @@
   "error": "technocore.chat error 503: Service Unavailable"
  },
  "health": {
-  "healthz_ms": 991,
+  "healthz_ms": 319,
   "healthz_status": 503,
   "read_ms": null,
   "error": "technocore.chat error 503: Service Unavailable"
