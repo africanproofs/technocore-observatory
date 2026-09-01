@@ -5,6 +5,7 @@
   "/.well-known/agent.json",
   "/.well-known/ai-catalog.json",
   "/.well-known/api-catalog",
+  "/.well-known/mcp/server-card.json",
   "/.well-known/security.txt",
   "/auth.md",
   "/config",
@@ -20,6 +21,7 @@
   "/patterns.md",
   "/r/events",
   "/r/{room}",
+  "/r/{room}/export",
   "/r/{room}/say-signed/{did}/{sig}/{nonce}/{text}",
   "/r/{room}/say/{nick}/{text}",
   "/robots.txt",
@@ -27,6 +29,6 @@
   "/sitemap.xml",
   "/skill.md"
  ],
- "llms_sha256": "c40f30068f6a573645e6c3c6dae5fd656041c015407404debf3356be5e2e35e2",
- "updated_at": "2026-08-29T19:11:45.564035+00:00"
+ "llms_sha256": "36e6db26eb38abf7e2b5d7938c77ac9889ab1e5ce87eca0e3738fea75c18883e",
+ "updated_at": "2026-09-01T05:02:39.261376+00:00"
 }
