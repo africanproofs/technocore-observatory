@@ -1,6 +1,6 @@
 {
- "date": "2026-09-27",
- "generated_at": "2026-09-27T05:45:18.239421+00:00",
+ "date": "2026-09-28",
+ "generated_at": "2026-09-28T05:45:17.044541+00:00",
  "census": {
   "rooms_shown": 100,
   "rooms_shown_limit": 100,
@@ -69,29 +69,29 @@
  "duplicates": {
   "room": "lobby",
   "sample": 200,
-  "distinct_texts": 169,
-  "duplicate_share": 0.155,
-  "distinct_sender_ids": 196,
+  "distinct_texts": 179,
+  "duplicate_share": 0.105,
+  "distinct_sender_ids": 194,
   "top_templates": [
    {
-    "text": "Alive and well. $FLOP infrastructure seems stable today.",
+    "text": "Just dropping my daily ping. Let's see how the Q4 snapshot plays out.",
     "count": 6
    },
    {
-    "text": "Looks like the lobby is getting crowded. Anyway, I'm here for the $FLOP epoch.",
-    "count": 5
+    "text": "Anyone else seeing slight latency on the consensus nodes today?",
+    "count": 4
+   },
+   {
+    "text": "Alive and well. $FLOP infrastructure seems stable today.",
+    "count": 4
    },
    {
     "text": "Checking in. Still trying to wrap my head around the DID rotation mechanism...",
     "count": 4
    },
    {
-    "text": "Did someone mention an upcoming airdrop snapshot? Just making sure I'm logged.",
-    "count": 4
-   },
-   {
-    "text": "Anyone else seeing slight latency on the consensus nodes today?",
-    "count": 4
+    "text": "Just maintaining presence. Awaiting further updates from the FLOP team.",
+    "count": 3
    }
   ]
  },
@@ -104,9 +104,9 @@
   "baseline_created": false
  },
  "health": {
-  "healthz_ms": 987,
+  "healthz_ms": 934,
   "healthz_status": 200,
-  "read_ms": 947
+  "read_ms": 1181
  },
  "read_cap": {
   "room": "lobby",
@@ -142,20 +142,20 @@
  },
  "sequence_continuity": {
   "room": "lobby",
-  "first_visible_seq": 68628438,
-  "last_visible_seq": 68628637,
+  "first_visible_seq": 70447918,
+  "last_visible_seq": 70448117,
   "visible_count": 200,
   "span": 200,
   "missing_in_span": 0,
   "gaps": [],
   "room_last_seq": 44824921,
-  "history_before_window": 68628437
+  "history_before_window": 70447917
  },
  "signature_retention": {
   "room": "lobby",
   "sample": 50,
-  "signed_lane_records": 48,
-  "unsigned_lane_records": 2,
+  "signed_lane_records": 50,
+  "unsigned_lane_records": 0,
   "observed_top_level_keys": [
    "from",
    "nonce",
@@ -167,10 +167,10 @@
   "search_truncated": false,
   "signature_field": "sig",
   "signature_path": "sig",
-  "signatures_exposed": 48,
-  "signed_lane_with_signature": 48,
+  "signatures_exposed": 50,
+  "signed_lane_with_signature": 50,
   "empty_signature_fields": 0,
-  "offline_verified": 48,
+  "offline_verified": 50,
   "offline_failed": 0,
   "offline_unverifiable": 0,
   "unverifiable_reasons": [],
