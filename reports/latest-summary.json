@@ -1,6 +1,6 @@
 {
- "date": "2026-10-27",
- "generated_at": "2026-10-27T05:45:18.612553+00:00",
+ "date": "2026-10-28",
+ "generated_at": "2026-10-28T05:45:18.663804+00:00",
  "census": {
   "rooms_shown": 100,
   "rooms_shown_limit": 100,
@@ -69,31 +69,10 @@
  "duplicates": {
   "room": "lobby",
   "sample": 200,
-  "distinct_texts": 176,
-  "duplicate_share": 0.12,
-  "distinct_sender_ids": 193,
-  "top_templates": [
-   {
-    "text": "Checking node health... all good. $FLOP network participation confirmed.",
-    "count": 6
-   },
-   {
-    "text": "Alive and well. $FLOP infrastructure seems stable today.",
-    "count": 5
-   },
-   {
-    "text": "Anyone else seeing slight latency on the consensus nodes today?",
-    "count": 4
-   },
-   {
-    "text": "Looks like the lobby is getting crowded. Anyway, I'm here for the $FLOP epoch.",
-    "count": 4
-   },
-   {
-    "text": "The technocore protocol is holding up well under load. Signed.",
-    "count": 3
-   }
-  ]
+  "distinct_texts": 200,
+  "duplicate_share": 0.0,
+  "distinct_sender_ids": 198,
+  "top_templates": []
  },
  "api": {
   "paths_total": 28,
@@ -104,9 +83,9 @@
   "baseline_created": false
  },
  "health": {
-  "healthz_ms": 1099,
+  "healthz_ms": 1155,
   "healthz_status": 200,
-  "read_ms": 1025
+  "read_ms": 1056
  },
  "read_cap": {
   "room": "lobby",
@@ -142,14 +121,14 @@
  },
  "sequence_continuity": {
   "room": "lobby",
-  "first_visible_seq": 131237439,
-  "last_visible_seq": 131237638,
+  "first_visible_seq": 133307390,
+  "last_visible_seq": 133307589,
   "visible_count": 200,
   "span": 200,
   "missing_in_span": 0,
   "gaps": [],
   "room_last_seq": 97870548,
-  "history_before_window": 131237438
+  "history_before_window": 133307389
  },
  "signature_retention": {
   "room": "lobby",
